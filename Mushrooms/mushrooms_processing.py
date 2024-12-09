@@ -3,14 +3,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from ucimlrepo import fetch_ucirepo
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import LabelEncoder
 from sklearn.impute import SimpleImputer
 
 
 def load_data():
-    
-    #Load data from UCI ML Repository
-    
+ 
     # Fetch dataset
     mushroom = fetch_ucirepo(id=73)
     
@@ -25,96 +23,61 @@ def load_data():
     
     return X, y, mushroom.metadata, mushroom.variables
 
+
 def perform_eda(X, y):
-    
-    #Perform Exploratory Data Analysis
-     
-    print("\n--- Performing EDA ---")   
+ 
+    print("\n--- Performing EDA ---")
 
     # Combine features and target for analysis
     df = pd.concat([X, y], axis=1)
     
+    # Basic Dataset Information
     print("\n1. Basic Dataset Information:")
     print("Dataset Shape:", df.shape)
     print("\nFeature Names:", list(X.columns))
     print("\nSample of the dataset:")
     print(df.head())
     
+    # Data Types and Missing Values
     print("\n2. Data Types and Missing Values:")
     print(df.info())
     
     missing_values = df.isnull().sum()
     missing_percentage = (missing_values / len(df)) * 100
+    print("\nMissing Values Analysis:")
+    print(missing_values[missing_values > 0])
     
-    print("\n3. Missing Values Analysis:")
-    missing_df = pd.DataFrame({
-        'Missing Values': missing_values,
-        'Percentage': missing_percentage
-    })
-    print(missing_df[missing_df['Missing Values'] > 0])
-    
-    # Visualize missing values
-    plt.figure(figsize=(12, 6))
-    sns.heatmap(df.isnull(), yticklabels=False, cbar=True, cmap='viridis')
-    plt.title('Missing Values Heatmap')
-    plt.tight_layout()
-    plt.show()
-    
-    print("\n4. Categorical Variables Analysis:")
-    for column in df.columns:
-        print(f"\nDistribution of {column}:")
-        value_counts = df[column].value_counts()
-        print(value_counts)
-        print(f"\nPercentage distribution of {column}:")
-        print(value_counts / len(df) * 100)
-
-        
-        
-        # Create bar plot
-        plt.figure(figsize=(10, 6))
-        value_counts.plot(kind='bar')
-        plt.title(f'Distribution of {column}')
-        plt.xticks(rotation=45)
-        plt.tight_layout()
+    # Visualize missing values if any
+    if missing_values.sum() > 0:
+        plt.figure(figsize=(10, 5))
+        sns.heatmap(df.isnull(), cbar=False, cmap="viridis", yticklabels=False)
+        plt.title('Missing Values Heatmap')
         plt.show()
-
-         # Add duplicate check
-        print("\nDuplicate Rows:")
-        duplicates = df.duplicated().sum()
-        print(f"Number of duplicate rows: {duplicates}")
-        
-        # Add mode calculation for categorical variables
-        print("\nMode for each feature:")
-        print(df.mode().iloc[0])
     
-    print("\n5. Target Variable Analysis:")
-    print("Distribution of target variable (edible vs poisonous):")
+    # Target Variable Distribution
+    print("\n3. Target Variable Analysis:")
+    print("Target Distribution (edible vs poisonous):")
     print(y.value_counts())
     print("\nPercentage distribution:")
-    print(y.value_counts() / len(y) * 100)
+    print((y.value_counts() / len(y)) * 100)
     
-    
-    # Relationship between features and target
-    print("\n6. Feature-Target Relationships:")
+    # Feature Distributions 
+    print("\n4. Feature Distributions:")
     for column in X.columns:
-        contingency = pd.crosstab(X[column], y.iloc[:, 0])
-        print(f"\nContingency table for {column}:")
-        print(contingency)
-        
-        # Visualize relationship
-        plt.figure(figsize=(10, 6))
-        contingency.plot(kind='bar', stacked=True)
-        plt.title(f'Relationship between {column} and Target')
-        plt.xticks(rotation=45)
-        plt.legend(title='Target')
-        plt.tight_layout()
-        plt.show()
+        print(f"\nDistribution of {column}:")
+        print(X[column].value_counts())
+        print(f"\nPercentage distribution of {column}:")
+        print((X[column].value_counts() / len(X)) * 100)
+
+    # Check for Duplicate Rows
+    print("\n5. Duplicate Rows:")
+    duplicates = df.duplicated().sum()
+    print(f"Number of duplicate rows: {duplicates}")
+
 
 def preprocess_data(X, y):
-    
-    #Preprocess the data
      
-    print("\n7. Data Preprocessing:")
+    print("\n--- Preprocessing Data ---")
     
     # Handle missing values
     imputer = SimpleImputer(strategy='most_frequent')
@@ -136,6 +99,7 @@ def preprocess_data(X, y):
     
     return X_encoded, y_encoded
 
+
 def main():
     # Load data
     X, y, metadata, variables = load_data()
@@ -146,8 +110,9 @@ def main():
     # Preprocess data
     X_processed, y_processed = preprocess_data(X, y)
     
-    print("\nEDA and Preprocessing completed!")
-    print("You can now proceed with your modeling tasks.")
+    print("\nEDA and Preprocessing completed.")
+  
+
 
 if __name__ == "__main__":
     main()
