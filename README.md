@@ -13,7 +13,7 @@
    ```bash
    python mushrooms_main.py
    ```
-## How to Run the Abalone Dataset
+## How to Run the Abalone, Iris, and Wine Datasets
 
 **Install Dependencies**  
    Run the following command to install all required dependencies:  
@@ -26,9 +26,5 @@
 
 **Run Experimenting and Model Comparison**  
    Hit the play button in the Jupyter Notebook
-
-## How to Run the Iris Dataset
-
-## How to Run the Wine Dataset
 
 
